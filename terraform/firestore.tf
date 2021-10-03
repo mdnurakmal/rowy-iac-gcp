@@ -5,4 +5,8 @@ resource "google_app_engine_application" "app" {
   database_type = "CLOUD_FIRESTORE"
   location_id = var.region
 
+    lifecycle {
+    prevent_destroy = true
+  }
+
 }
