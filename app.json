@@ -25,10 +25,11 @@
         "sudo chmod +x ./create_bucket.sh",
         "sudo ./create_bucket.sh $GOOGLE_CLOUD_PROJECT",
 
-        "cd terraform && terraform init",
-        "cd terraform && terraform state pull",
-        "cd terraform && terraform apply -auto-approve -var region=$GOOGLE_CLOUD_REGION",
-        "cd ..",
+        "terraform -chdir=terraform init",
+        "terraform -chdir=terraform state pull",
+        "terraform -chdir=terraform import google_app_engine_application.app $GOOGLE_CLOUD_PROJECT",
+        "terraform -chdir=terraform import google_firebase_project.default $GOOGLE_CLOUD_PROJECT",
+        "terraform -chdir=terraform apply -auto-approve -var region=$GOOGLE_CLOUD_REGION",
 
         "npm install",
         "npm run build",
@@ -43,3 +44,4 @@
     }
   }
 }
+
