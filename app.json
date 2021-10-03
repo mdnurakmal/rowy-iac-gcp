@@ -1,0 +1,44 @@
+{
+  "name": "rowy-run",
+  "env": {
+    "ROWY_SECRET": {
+      "generator": "secret"
+    }
+  },
+  "options": {
+    "allow-unauthenticated": true,
+    "memory": "2Gi"
+  },
+  "hooks": {
+    "prebuild": {
+      "commands": [
+        "echo $PWD",
+        "$(sudo curl -fsSLO https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh)",
+        "sudo chmod +x ./install.sh",
+        "sudo ./install.sh",
+
+        "tfswitch -u -b /bin",
+        "sudo ln -sf $HOME/bin/terraform /usr/local/bin/terraform",
+
+        "gcloud config set project $GOOGLE_CLOUD_PROJECT",
+        "gcloud config set run/region $GOOGLE_CLOUD_REGION",
+        "sudo chmod +x ./create_bucket.sh",
+        "sudo ./create_bucket.sh $GOOGLE_CLOUD_PROJECT",
+
+        "cd terraform && terraform init",
+        "cd terraform && terraform state pull",
+        "cd terraform && terraform apply -auto-approve -var region=$GOOGLE_CLOUD_REGION",
+
+        "npm install",
+        "npm run build",
+        "cd build/hooks && node prebuild"
+      ]
+    },
+    "postcreate": {
+      "commands": [
+        "cd build/hooks && node postcreate",
+        "gcloud run services update roxy-cloud-run --service-account rowy-sa@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com --platform managed"
+      ]
+    }
+  }
+}
