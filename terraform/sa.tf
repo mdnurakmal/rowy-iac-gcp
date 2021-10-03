@@ -16,6 +16,6 @@ resource "google_project_iam_binding" "serviceAccountUser_permmisions" {
   role = "roles/iam.serviceAccountUser"
 
   members = [local.rowy_sa]
-  depends_on = [google_service_account.firebase_permmisions]
+  depends_on = [google_project_iam_binding.firebase_permmisions]
 }
 
