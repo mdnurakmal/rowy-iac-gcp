@@ -5,7 +5,7 @@ resource "google_service_account" "rowy_sa" {
 }
 
 resource "google_project_iam_binding" "firebase_permmisions" {
-  project = var.project
+  project = local.project
   role = "roles/firebase.admin"
 
     members    = [local.rowy_sa]
